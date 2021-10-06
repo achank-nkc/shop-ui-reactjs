@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Footer from "../components/Footer";
 import Newsletter from "../components/Newsletter";
 import styled from "styled-components";
@@ -110,9 +110,29 @@ const Button = styled.button`
 const Product = () => {
   const { id } = useParams();
   const { itemsClothing } = useGlobalContext();
-
   const item = itemsClothing[id - 1];
-  console.log(item);
+  const [color, setColor] = useState("black");
+  const [amount, setAmount] = useState(1);
+
+  const selectBlack = () => {
+    setColor("black");
+  };
+  const selectBeige = () => {
+    setColor("beige");
+  };
+  const selectGray = () => {
+    setColor("gray");
+  };
+
+  const increase = () => {
+    setAmount(amount + 1);
+  };
+  const decrease = () => {
+    if (amount > 1) {
+      setAmount(amount - 1);
+    }
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -126,9 +146,21 @@ const Product = () => {
           <FilterContainer>
             <Filter>
               <FilterTitle>Color:</FilterTitle>
-              <FitlerColor className="selected" color="black" />
-              <FitlerColor color="beige" />
-              <FitlerColor color="gray" />
+              <FitlerColor
+                className={`${color === "black" && "selected"}`}
+                color="black"
+                onClick={selectBlack}
+              />
+              <FitlerColor
+                className={`${color === "beige" && "selected"}`}
+                color="beige"
+                onClick={selectBeige}
+              />
+              <FitlerColor
+                className={`${color === "gray" && "selected"}`}
+                onClick={selectGray}
+                color="gray"
+              />
             </Filter>
 
             <Filter>
@@ -145,9 +177,9 @@ const Product = () => {
 
           <AddContainer>
             <AmountContainer>
-              <Remove />
-              <Amount>1</Amount>
-              <Add />
+              <Remove onClick={decrease} />
+              <Amount>{amount}</Amount>
+              <Add onClick={increase} />
             </AmountContainer>
             <Button>ADD TO CART</Button>
           </AddContainer>
