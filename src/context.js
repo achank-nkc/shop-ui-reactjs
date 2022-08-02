@@ -1,19 +1,20 @@
 import React, { useContext, useEffect, useReducer } from "react";
-import { cartItems, popularProducts } from "./data";
+import { popularProducts } from "./data";
 import reducer from "./reducer";
 
 const AppContext = React.createContext();
 const initialState = {
-  itemsClothing: popularProducts,
-  cart: cartItems,
+  products: popularProducts,
+  cart: [],
   amount: 0,
   total: 0,
-  size: "",
-  color: "",
 };
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const addToCart = (item, color, size, quantity) => {
+    dispatch({ type: "ADD_TO_CART", payload: { item, color, size, quantity } });
+  };
   const clearCart = () => {
     dispatch({ type: "CLEAR_CART" });
   };
@@ -39,6 +40,7 @@ const AppProvider = ({ children }) => {
     <AppContext.Provider
       value={{
         ...state,
+        addToCart,
         clearCart,
         removeItem,
         increase,

@@ -1,7 +1,48 @@
 const reducer = (state, action) => {
   if (action.type === "CHECKOUT") {
-    alert("Checkout?");
+    alert(`Checkout ${state.amount} Items?`);
     return { ...state, cart: [] };
+  }
+
+  if (action.type === "ADD_TO_CART") {
+    let newCart = [];
+    const isItemInCart = state.cart.find(
+      (item) => item.id === action.payload.item.id
+    );
+
+    if (isItemInCart) {
+      if (
+        isItemInCart.color === action.payload.color &&
+        isItemInCart.size === action.payload.size
+      ) {
+        newCart = state.cart.map((item) =>
+          item.id === action.payload.item.id
+            ? { ...item, quantity: item.quantity + action.payload.quantity }
+            : item
+        );
+      } else {
+        newCart = [
+          ...state.cart,
+          {
+            ...action.payload.item,
+            color: action.payload.color,
+            size: action.payload.size,
+            quantity: action.payload.quantity,
+          },
+        ];
+      }
+    } else {
+      newCart = [
+        ...state.cart,
+        {
+          ...action.payload.item,
+          color: action.payload.color,
+          size: action.payload.size,
+          quantity: action.payload.quantity,
+        },
+      ];
+    }
+    return { ...state, cart: newCart };
   }
 
   if (action.type === "CLEAR_CART") {
@@ -18,7 +59,7 @@ const reducer = (state, action) => {
   if (action.type === "INCREASE") {
     const newCart = state.cart.map((item) => {
       if (item.id === action.payload) {
-        return { ...item, amount: item.amount + 1 };
+        return { ...item, quantity: item.quantity + 1 };
       }
       return item;
     });
@@ -29,20 +70,20 @@ const reducer = (state, action) => {
     const newCart = state.cart
       .map((item) => {
         if (item.id === action.payload) {
-          return { ...item, amount: item.amount - 1 };
+          return { ...item, quantity: item.quantity - 1 };
         }
         return item;
       })
-      .filter((item) => item.amount !== 0);
+      .filter((item) => item.quantity !== 0);
     return { ...state, cart: newCart };
   }
 
   if (action.type === "GET_TOTALS") {
     let { total, amount } = state.cart.reduce(
       (cartTotal, item) => {
-        const { amount, price } = item;
-        cartTotal.amount += amount;
-        cartTotal.total += amount * price;
+        const { quantity, price } = item;
+        cartTotal.amount += quantity;
+        cartTotal.total += quantity * price;
         return cartTotal;
       },
       { total: 0, amount: 0 }
@@ -52,19 +93,20 @@ const reducer = (state, action) => {
   }
 
   if (action.type === "TOGGLE_AMOUNT") {
+    console.log(action.payload.type);
     let newCart = state.cart
       .map((item) => {
         if (item.id === action.payload.id) {
           if (action.payload.type === "inc") {
-            return { ...item, amount: item.amount + 1 };
+            return { ...item, quantity: item.quantity + 1 };
           }
           if (action.payload.type === "dec") {
-            return { ...item, amount: item.amount - 1 };
+            return { ...item, quantity: item.quantity - 1 };
           }
         }
         return item;
       })
-      .filter((item) => item.amount !== 0);
+      .filter((item) => item.quantity !== 0);
     return { ...state, cart: newCart };
   }
 

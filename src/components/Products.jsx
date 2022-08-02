@@ -15,10 +15,10 @@ const Container = styled.div`
 `;
 
 const Products = () => {
-  const { itemsClothing } = useGlobalContext();
+  const { products } = useGlobalContext();
   return (
     <Container>
-      {itemsClothing.map((item) => (
+      {products.map((item) => (
         <ProductItem item={item} key={item.id} />
       ))}
     </Container>

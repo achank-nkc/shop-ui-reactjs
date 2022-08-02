@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import Newsletter from "../components/Newsletter";
 import styled from "styled-components";
@@ -109,10 +109,11 @@ const Button = styled.button`
 
 const Product = () => {
   const { id } = useParams();
-  const { itemsClothing } = useGlobalContext();
-  const item = itemsClothing[id - 1];
+  const { products, addToCart } = useGlobalContext();
+  const item = products.find((p) => p.id === parseInt(id));
   const [color, setColor] = useState("black");
-  const [amount, setAmount] = useState(1);
+  const [size, setSize] = useState("S");
+  const [quantity, setQuantity] = useState(1);
 
   const selectBlack = () => {
     setColor("black");
@@ -125,66 +126,77 @@ const Product = () => {
   };
 
   const increase = () => {
-    setAmount(amount + 1);
+    setQuantity(quantity + 1);
   };
   const decrease = () => {
-    if (amount > 1) {
-      setAmount(amount - 1);
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
     }
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <Container>
-      <Wrapper>
-        <ImgContainer>
-          <Image src={item.img} alt={item.name} />
-        </ImgContainer>
-        <InfoContainer>
-          <Title>{item.name}</Title>
-          <Desc>{item.desc}</Desc>
-          <Price>{item.price}</Price>
-          <FilterContainer>
-            <Filter>
-              <FilterTitle>Color:</FilterTitle>
-              <FitlerColor
-                className={`${color === "black" && "selected"}`}
-                color="black"
-                onClick={selectBlack}
-              />
-              <FitlerColor
-                className={`${color === "beige" && "selected"}`}
-                color="beige"
-                onClick={selectBeige}
-              />
-              <FitlerColor
-                className={`${color === "gray" && "selected"}`}
-                onClick={selectGray}
-                color="gray"
-              />
-            </Filter>
+      {item ? (
+        <Wrapper>
+          <ImgContainer>
+            <Image src={item.img} alt={item.name} />
+          </ImgContainer>
+          <InfoContainer>
+            <Title>{item.name}</Title>
+            <Desc>{item.desc}</Desc>
+            <Price>${item.price}</Price>
+            <FilterContainer>
+              <Filter>
+                <FilterTitle>Color:</FilterTitle>
+                <FitlerColor
+                  className={`${color === "black" && "selected"}`}
+                  color="black"
+                  onClick={selectBlack}
+                />
+                <FitlerColor
+                  className={`${color === "beige" && "selected"}`}
+                  color="beige"
+                  onClick={selectBeige}
+                />
+                <FitlerColor
+                  className={`${color === "gray" && "selected"}`}
+                  onClick={selectGray}
+                  color="gray"
+                />
+              </Filter>
 
-            <Filter>
-              <FilterTitle>Size:</FilterTitle>
-              <FilterSize>
-                <FilterSizeOption>XS</FilterSizeOption>
-                <FilterSizeOption>S</FilterSizeOption>
-                <FilterSizeOption>M</FilterSizeOption>
-                <FilterSizeOption>L</FilterSizeOption>
-                <FilterSizeOption>XL</FilterSizeOption>
-              </FilterSize>
-            </Filter>
-          </FilterContainer>
+              <Filter>
+                <FilterTitle>Size:</FilterTitle>
+                <FilterSize
+                  value={size}
+                  onChange={(e) => setSize(e.target.value)}
+                >
+                  <FilterSizeOption value={"XS"}>XS</FilterSizeOption>
+                  <FilterSizeOption value={"S"}>S</FilterSizeOption>
+                  <FilterSizeOption value={"M"}>M</FilterSizeOption>
+                  <FilterSizeOption value={"L"}>L</FilterSizeOption>
+                  <FilterSizeOption value={"XL"}>XL</FilterSizeOption>
+                </FilterSize>
+              </Filter>
+            </FilterContainer>
 
-          <AddContainer>
-            <AmountContainer>
-              <Remove onClick={decrease} />
-              <Amount>{amount}</Amount>
-              <Add onClick={increase} />
-            </AmountContainer>
-            <Button>ADD TO CART</Button>
-          </AddContainer>
-        </InfoContainer>
-      </Wrapper>
+            <AddContainer>
+              <AmountContainer>
+                <Remove onClick={decrease} />
+                <Amount>{quantity}</Amount>
+                <Add onClick={increase} />
+              </AmountContainer>
+              <Button onClick={() => addToCart(item, color, size, quantity)}>
+                ADD TO CART
+              </Button>
+            </AddContainer>
+          </InfoContainer>
+        </Wrapper>
+      ) : null}
       <Newsletter />
       <Footer />
     </Container>

@@ -194,12 +194,18 @@ const Cart = () => {
                   </ProductDetails>
                   <PriceDetails>
                     <ProductAmountContainer>
-                      <Add onClick={() => toggleAmount(item.id, "inc")} />
-                      <ProductAmount>{item.amount}</ProductAmount>
-                      <Remove onClick={() => toggleAmount(item.id, "dec")} />
+                      <Add
+                        style={{ cursor: "pointer" }}
+                        onClick={() => toggleAmount(item.id, "inc")}
+                      />
+                      <ProductAmount>{item.quantity}</ProductAmount>
+                      <Remove
+                        style={{ cursor: "pointer" }}
+                        onClick={() => toggleAmount(item.id, "dec")}
+                      />
                     </ProductAmountContainer>
                     <ProductPrice>
-                      ${parseFloat((item.price * item.amount).toFixed(2))}
+                      ${parseFloat((item.price * item.quantity).toFixed(2))}
                     </ProductPrice>
                     <TopText
                       style={{ color: "red" }}
